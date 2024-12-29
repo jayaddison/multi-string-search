@@ -1,0 +1,14 @@
+[project]
+authors = [
+  { name = "James Addison", email = "jay@jp-hosting.net" }
+]
+classifiers = [
+  "License :: OSI Approved :: GNU Affero General Public License v3 or later (AGPLv3+)",
+  "Topic :: Text Processing"
+]
+description = "Prototyped multi-pattern text search implementations in Python"
+license = { file = "LICENSE" }
+name = "multi-string-search"
+readme = "README.md"
+requires-python = ">= 3.12"
+version = "0.1-alpha"
