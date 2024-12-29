@@ -1,4 +1,16 @@
 class FactorOracle:
+    @staticmethod
+    def _build_trie(terms: list[str]) -> dict:
+        root = {}
+        for term in terms:
+            node = root
+            for char in term:
+                if char not in node:
+                    node[char] = {}
+                node = node[char]
+            node[None] = True
+        return root
+
     def __init__(self, terms: list[str]):
         pass
 

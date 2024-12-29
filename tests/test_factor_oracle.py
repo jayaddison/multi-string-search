@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from multi_string_search import search_sbom
+from multi_string_search import FactorOracle, search_sbom
 
 from tests.fixtures import (
     DOCUMENT,
@@ -11,6 +11,19 @@ from tests.fixtures import (
 
 
 class TestFactorOracleSearch(TestCase):
+
+    def test_trie_build(self):
+        terms = ("abc", "aab", "aabc", "bac")
+        trie = FactorOracle._build_trie(terms)
+        assert trie == {
+            'a': {
+                'b': {'c': {None: True}},
+                'a': {'b': {None: True, "c": {None: True}}},
+            },
+            'b': {
+                'a': {'c': {None: True}},
+            },
+        }
 
     def test_complete_queries(self):
         for terms in complete_subset_queries:
