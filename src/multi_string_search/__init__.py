@@ -70,7 +70,7 @@ class FactorOracle:
         while nodes:
             depth, from_char, node = nodes.pop(0)
             for to_char, subnode in node.items():
-                yield depth, from_char, to_char, subnode, node
+                yield depth, from_char, to_char, subnode, node, subnode is True
                 if isinstance(subnode, dict):
                     nodes.append((depth + 1, to_char, subnode))
 
