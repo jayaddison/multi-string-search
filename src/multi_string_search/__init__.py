@@ -12,10 +12,15 @@ class FactorOracle:
     pattern -- and these paths are created from a reversed representation of
     each pattern.
 
-    So, if our patterns are "a", "b", and "food", and we attempt a match of
-    those patterns against a document "food products", we can begin by
-    looking at character 4 (the longest pattern, "food", has length 4) in the
-    document, and our oracle would begin matching from the character "d",
+    Conversely, we can read-ahead by at least the _minimum_-length pattern
+    in the pattern collection from the start of the string and also any other
+    time that we encounter a position from which no patterns could possibly
+    match.
+
+    So, if our patterns are "twelve", "notes", and "food", and we attempt a
+    match of those patterns against a document "food products", we can begin by
+    looking at character 4 (the min-length pattern, "food", has length 4) in
+    the document, and our oracle would begin matching from the character "d",
     proceeding through two reverse steps of "o" and "o" before finding a
     terminal state (complete string match found) of "f".
     """
