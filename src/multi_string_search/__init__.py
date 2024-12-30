@@ -15,7 +15,7 @@ class FactorOracle:
         return root
 
     @staticmethod
-    def _traverse(trie: dict[str, str]) -> Iterator[tuple[str, str | None]]:
+    def _traverse(trie: dict[str, str]) -> Iterator[tuple[str, str | None, int]]:
         nodes = [(trie, None, 0)]
         while nodes:
             node, parent, depth = nodes.pop(0)
