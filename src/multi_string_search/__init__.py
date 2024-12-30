@@ -15,11 +15,14 @@ class FactorOracle:
         return root
 
     @staticmethod
-    def _traverse(trie: dict[str, str], depth: int = 0, parent: str | None = None) -> Iterator[tuple[str, str | None]]:
-        for node, subtrie in trie.items():
-             yield depth, node, parent
-             if isinstance(subtrie, dict):
-                 yield from FactorOracle._traverse(trie=subtrie, depth=depth + 1, parent=node)
+    def _traverse(trie: dict[str, str]) -> Iterator[tuple[str, str | None]]:
+        nodes = [(trie, None, 0)]
+        while nodes:
+            node, parent, depth = nodes.pop(0)
+            for subnode, subtrie in node.items():
+                yield depth, subnode, parent
+                if isinstance(subtrie, dict):
+                    nodes.append((subtrie, subnode, depth + 1))
 
     def __init__(self, terms: list[str]):
         pass
