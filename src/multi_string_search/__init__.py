@@ -24,6 +24,19 @@ class FactorOracle:
     the document, and our oracle would begin matching from the character "d",
     proceeding through two reverse steps of "o" and "o" before finding a
     terminal state (complete string match found) of "f".
+
+
+       E -> V -> L -> E -> W -> T
+
+       S -> E -> T -> O -> N
+
+       D -> O -> O -> F
+
+
+    For these example patterns we don't have much overlap between the input
+    patterns; when overlapping patterns do exist, the oracle factor's graph
+    consolidates (de-duplicates) the overlapping parts.
+
     """
     @staticmethod
     def _build_trie(terms: list[str]) -> dict:
