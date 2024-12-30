@@ -15,7 +15,7 @@ class TestFactorOracleSearch(TestCase):
     def test_trie_build(self):
         terms = ("abc", "aab", "aabc", "bac")
         trie = FactorOracle._build_trie(terms)
-        assert trie == {
+        self.assertEqual({
             'a': {
                 'b': {'c': {None: True}},
                 'a': {'b': {None: True, "c": {None: True}}},
@@ -23,13 +23,13 @@ class TestFactorOracleSearch(TestCase):
             'b': {
                 'a': {'c': {None: True}},
             },
-        }
+        }, trie)
 
     def test_trie_traversal(self):
         terms = ("abc", "aab", "aabc", "bac")
         trie = FactorOracle._build_trie(terms)
         traversal = list(FactorOracle._traverse(trie))
-        assert traversal == [
+        self.assertEqual([
             (0, 'a', None),
             (1, 'b', 'a'),
             (2, 'c', 'b'),
@@ -43,16 +43,16 @@ class TestFactorOracleSearch(TestCase):
             (1, 'a', 'b'),
             (2, 'c', 'a'),
             (3, None, 'c'),  # bac
-        ]
+        ], traversal)
 
     def test_complete_queries(self):
         for terms in complete_subset_queries:
-            assert search_sbom(DOCUMENT, terms) is True
+            self.assertTrue(search_sbom(DOCUMENT, terms))
 
     def test_overlapping_queries(self):
         for terms in overlapping_set_queries:
-            assert search_sbom(DOCUMENT, terms) is False
+            self.assertFalse(search_sbom(DOCUMENT, terms))
 
     def test_disjoint_queries(self):
         for terms in disjoint_set_queries:
-            assert search_sbom(DOCUMENT, terms) is False
+            self.assertFalse(search_sbom(DOCUMENT, terms))
