@@ -2,6 +2,23 @@ from typing import Iterator
 
 
 class FactorOracle:
+    """
+    This class will implement a Set Backwards Oracle Matching (SBOM) factor
+    oracle; it's a datastructure constructed from a collection of text patterns
+    used to match against text documents.
+
+    Roughly speaking, the oracle contains a graph of state transitions with a
+    maximum path length that equals the maximum length of the largest input
+    pattern -- and these paths are created from a reversed representation of
+    each pattern.
+
+    So, if our patterns are "a", "b", and "food", and we attempt a match of
+    those patterns against a document "food products", we can begin by
+    looking at character 4 (the longest pattern, "food", has length 4) in the
+    document, and our oracle would begin matching from the character "d",
+    proceeding through two reverse steps of "o" and "o" before finding a
+    terminal state (complete string match found) of "f".
+    """
     @staticmethod
     def _build_trie(terms: list[str]) -> dict:
         root = {}
