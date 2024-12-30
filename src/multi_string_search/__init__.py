@@ -66,13 +66,13 @@ class FactorOracle:
 
     @staticmethod
     def _traverse(trie: dict[str, str]) -> Iterator[tuple[str, dict[str, str], str | None, int]]:
-        nodes = [(trie, None, 0)]
+        nodes = [(0, trie, None)]
         while nodes:
-            node, parent, depth = nodes.pop(0)
+            depth, node, parent = nodes.pop(0)
             for subnode, subtrie in node.items():
                 yield depth, subnode, subtrie, parent
                 if isinstance(subtrie, dict):
-                    nodes.append((subtrie, subnode, depth + 1))
+                    nodes.append((depth + 1, subtrie, subnode))
 
     def __init__(self, terms: list[str]):
         pass
