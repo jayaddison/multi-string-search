@@ -7,10 +7,11 @@ class FactorOracle:
     oracle; it's a datastructure constructed from a collection of text patterns
     used to match against text documents.
 
-    Roughly speaking, the oracle contains a graph of state transitions with a
-    maximum path length that equals the maximum length of the largest input
-    pattern -- and these paths are created from a reversed representation of
-    each pattern.
+    Roughly speaking, the oracle is a directed graph of state transitions, with
+    each transition corresponding to a single character read during document
+    matching.  The maximum length of any path in the graph is no greater than
+    the maximum length of the largest input pattern -- and each paths is
+    created from a _reversed_ representation of the corresponding pattern.
 
     Conversely, we can read-ahead by at least the _minimum_-length pattern
     in the pattern collection from the start of the string and also any other
