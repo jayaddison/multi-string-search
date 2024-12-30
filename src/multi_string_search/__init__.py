@@ -1,3 +1,6 @@
+from typing import Iterator
+
+
 class FactorOracle:
     @staticmethod
     def _build_trie(terms: list[str]) -> dict:
@@ -10,6 +13,13 @@ class FactorOracle:
                 node = node[char]
             node[None] = True
         return root
+
+    @staticmethod
+    def _traverse(trie: dict[str, str], depth: int = 0, parent: str | None = None) -> Iterator[tuple[str, str | None]]:
+        for node, subtrie in trie.items():
+             yield depth, node, parent
+             if isinstance(subtrie, dict):
+                 yield from FactorOracle._traverse(trie=subtrie, depth=depth + 1, parent=node)
 
     def __init__(self, terms: list[str]):
         pass

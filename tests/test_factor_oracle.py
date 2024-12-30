@@ -25,6 +25,26 @@ class TestFactorOracleSearch(TestCase):
             },
         }
 
+    def test_trie_traversal(self):
+        terms = ("abc", "aab", "aabc", "bac")
+        trie = FactorOracle._build_trie(terms)
+        traversal = list(FactorOracle._traverse(trie))
+        assert traversal == [
+            (0, 'a', None),
+            (1, 'b', 'a'),
+            (2, 'c', 'b'),
+            (3, None, 'c'),  # abc
+            (1, 'a', 'a'),
+            (2, 'b', 'a'),
+            (3, None, 'b'),  # aab
+            (3, 'c', 'b'),
+            (4, None, 'c'),  # aabc
+            (0, 'b', None),
+            (1, 'a', 'b'),
+            (2, 'c', 'a'),
+            (3, None, 'c'),  # bac
+        ]
+
     def test_complete_queries(self):
         for terms in complete_subset_queries:
             assert search_sbom(DOCUMENT, terms) is True
