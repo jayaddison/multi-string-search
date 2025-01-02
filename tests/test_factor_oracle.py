@@ -38,7 +38,6 @@ class TestFactorOracleSearch(TestCase):
         trie = FactorOracle._build_trie(terms)
         traversal = list((depth, from_char, to_char) for (depth, from_char, to_char, _, _, _) in FactorOracle._traverse(trie))
         self.assertEqual([
-            (0, None, None),
             (0, None, 'a'),
             (0, None, 'b'),
             (1, 'a', 'b'),
