@@ -90,8 +90,6 @@ class FactorOracle:
 
         for idx, (_, from_char, to_char, node, parent, node_is_terminal) in enumerate(FactorOracle._traverse(root)):
             nodes[id(node)] = idx
-            if node_is_terminal:
-                continue
 
             dot.node(str(idx))
 
