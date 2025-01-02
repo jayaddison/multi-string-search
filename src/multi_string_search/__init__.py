@@ -136,16 +136,27 @@ class FactorOracle:
         return nodes, edges, terminals
 
     def __init__(self, terms: set[str]):
-        prefix_length = min(len(term) for term in terms)
-        prefixes = [term[:prefix_length] for term in terms]
+        self.terms = terms
+        self.prefix_length = min(len(term) for term in terms)
+        prefixes = [term[:self.prefix_length] for term in terms]
         reversed_prefixes = [reversed(prefix) for prefix in prefixes]
         trie = FactorOracle._build_trie(reversed_prefixes)
         nodes, edges, terminals = FactorOracle._build_graph(trie, prefixes)
         self._graph = {"nodes": nodes, "edges": edges, "terminals": terminals}
 
     def search(self, document):
-        for char in iter(document):
-            pass
+        nodes, edges, terminals = self._graph.values()
+        while window := document[:self.prefix_length]:
+            state = 0
+            try:
+                for char in reversed(window):
+                    state = edges[state][char]
+            except KeyError:
+                document = document[self.prefix_length - 1:]  # advance the window
+                continue
+            if state in terminals and document.startswith(tuple(self.terms)):
+                return True
+            document = document[1:]  # slide the window
         return False
 
 
