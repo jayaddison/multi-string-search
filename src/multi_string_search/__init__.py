@@ -120,8 +120,9 @@ class FactorOracle:
                         break
                 else:
                     placement_idx = nodes[id(placement)]
-                    inbound[placement_idx] |= {from_char}
-                    dot.edge(str(placement_idx), str(idx), label=to_char)
+                    if from_char not in edges[placement_idx]:
+                        inbound[placement_idx] |= {from_char}
+                        dot.edge(str(placement_idx), str(idx), label=to_char)
                     continue
 
             if from_char not in edges[root_idx]:
