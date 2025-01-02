@@ -55,13 +55,14 @@ class FactorOracle:
     """
     @staticmethod
     def _build_trie(terms: list[str]) -> dict:
-        root = {}
+        root = {"..": None}
         for term in terms:
-            node = root
+            node, parent = root, None
             for char in term:
                 if char not in node:
                     node[char] = {}
-                node = node[char]
+                node, parent = node[char], node
+                node[".."] = parent
             node[None] = True
         return root
 
@@ -71,6 +72,8 @@ class FactorOracle:
         while nodes:
             depth, from_char, node = nodes.pop(0)
             for to_char, subnode in node.items():
+                if to_char == "..":
+                    continue
                 yield depth, from_char, to_char, subnode, node, subnode is True
                 if isinstance(subnode, dict):
                     nodes.append((depth + 1, to_char, subnode))

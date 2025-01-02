@@ -15,6 +15,14 @@ class TestFactorOracleSearch(TestCase):
     def test_trie_build(self):
         terms = ("abc", "aab", "aabc", "bac")
         trie = FactorOracle._build_trie(terms)
+
+        def del_parent_node_references(node):
+            del node[".."]
+            for _, subnode in node.items():
+                if isinstance(subnode, dict):
+                    del_parent_node_references(subnode)
+        del_parent_node_references(trie)
+
         self.assertEqual({
             'a': {
                 'b': {'c': {None: True}},
