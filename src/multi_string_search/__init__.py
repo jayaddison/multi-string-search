@@ -84,12 +84,12 @@ class FactorOracle:
         import graphviz
         dot = graphviz.Digraph(comment=f"{{{','.join(prefixes)}}}")
 
-        nodes = {id(None): 0}
+        nodes = {}
         edges = defaultdict(dict)
         inbound = defaultdict(set)
-        nodes[id(root)] = root_idx = 0
         terminals = set()
 
+        nodes[id(root)] = root_idx = 0
         for idx, (_, from_char, to_char, node, parent, node_is_terminal) in enumerate(FactorOracle._traverse(root)):
             nodes[id(node)] = idx
             if node_is_terminal:
