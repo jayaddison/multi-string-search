@@ -55,7 +55,7 @@ class FactorOracle:
     """
     @staticmethod
     def _build_trie(terms: list[str]) -> dict:
-        root = {"..": None}
+        root = {"..": (None, None)}
         for term in terms:
             node, parent = root, None
             for char in term:
