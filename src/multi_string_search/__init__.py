@@ -80,7 +80,7 @@ class FactorOracle:
                     yield depth, from_char, to_char, subnode, node, None in subnode
                     nodes.append((depth + 1, to_char, subnode))
 
-    def _build_graph(root: dict[str, str], prefixes: list[str]) -> dict[str, str]:
+    def _build_graph(root: dict[str, str], prefixes: list[str]) -> tuple[dict[int, str], dict[int, dict[str, int]], set[str]]:
         import graphviz
         dot = graphviz.Digraph(comment=f"{{{','.join(prefixes)}}}")
 
@@ -133,13 +133,15 @@ class FactorOracle:
                 dot.edge(str(root_idx), str(idx), label=to_char)
 
         dot.render(outfile="testing.png")
+        return nodes, edges, terminals
 
     def __init__(self, terms: set[str]):
         prefix_length = min(len(term) for term in terms)
         prefixes = [term[:prefix_length] for term in terms]
         reversed_prefixes = [reversed(prefix) for prefix in prefixes]
         trie = FactorOracle._build_trie(reversed_prefixes)
-        self._graph = FactorOracle._build_graph(trie, prefixes)
+        nodes, edges, terminals = FactorOracle._build_graph(trie, prefixes)
+        self._graph = {"nodes": nodes, "edges": edges, "terminals": terminals}
 
     def search(self, document):
         for char in iter(document):
