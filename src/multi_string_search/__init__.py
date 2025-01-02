@@ -121,6 +121,7 @@ class FactorOracle:
                 else:
                     placement_idx = nodes[id(placement)]
                     if from_char not in edges[placement_idx]:
+                        edges[placement_idx][from_char] = idx
                         inbound[placement_idx] |= {from_char}
                         dot.edge(str(placement_idx), str(idx), label=to_char)
                     continue
