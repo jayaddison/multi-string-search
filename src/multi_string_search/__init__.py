@@ -70,6 +70,7 @@ class FactorOracle:
     @staticmethod
     def _traverse(trie: dict[str, str]) -> Iterator[tuple[str, dict[str, str], str | None, int]]:
         nodes = [(0, None, trie)]
+        yield 0, None, None, trie, None, False
         while nodes:
             depth, from_char, node = nodes.pop(0)
             for to_char, subnode in node.items():
