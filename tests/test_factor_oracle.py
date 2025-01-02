@@ -44,14 +44,10 @@ class TestFactorOracleSearch(TestCase):
             (1, 'a', 'b'),
             (1, 'a', 'a'),
             (1, 'b', 'a'),
-            (2, 'b', 'c'),
-            (2, 'a', 'b'),
-            (2, 'a', 'c'),
-            (3, 'c', None),  # abc
-            (3, 'b', None),  # aab
-            (3, 'b', 'c'),
-            (3, 'c', None),  # bac
-            (4, 'c', None),  # aabc
+            (2, 'b', 'c'),  # abc
+            (2, 'a', 'b'),  # aab
+            (2, 'a', 'c'),  # bac
+            (3, 'b', 'c'),  # aabc
         ], traversal)
 
     def test_complete_queries(self):
