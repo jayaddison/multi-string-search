@@ -77,7 +77,7 @@ class FactorOracle:
                 if to_char == "..":
                     continue
                 if isinstance(subnode, dict):
-                    yield depth, from_char, to_char, subnode, node, True in node
+                    yield depth, from_char, to_char, subnode, node, None in subnode
                     nodes.append((depth + 1, to_char, subnode))
 
     def _build_graph(root: dict[str, str], prefixes: list[str]) -> dict[str, str]:
@@ -88,9 +88,12 @@ class FactorOracle:
         edges = defaultdict(dict)
         inbound = defaultdict(set)
         nodes[id(root)] = root_idx = 0
+        terminals = set()
 
         for idx, (_, from_char, to_char, node, parent, node_is_terminal) in enumerate(FactorOracle._traverse(root)):
             nodes[id(node)] = idx
+            if node_is_terminal:
+                terminals.add(idx)
 
             dot.node(str(idx))
             if parent is None:
