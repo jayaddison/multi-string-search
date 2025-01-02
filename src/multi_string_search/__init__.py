@@ -26,14 +26,15 @@ class FactorOracle:
 
     Roughly speaking, the oracle is a directed graph of state transitions, with
     each transition corresponding to a single character read during document
-    matching.  The maximum length of any path in the graph is no greater than
-    the maximum length of the largest input pattern -- and each paths is
-    created from a _reversed_ representation of the corresponding pattern.
+    matching.  It is used to match against a sliding range (window) of
+    characters in a document -- we choose the largest window size we can, to
+    reduce the number of comparison steps -- but the window can be no larger
+    than the shortest of the search patterns.
 
-    Conversely, we can read-ahead by at least the _minimum_-length pattern
-    in the pattern collection from the start of the string and also any other
-    time that we encounter a position from which no patterns could possibly
-    match.
+    At the start of the document, and in cases where we know that no pattern
+    can possibly match the latest-read character, we can advance the window
+    by its complete length.  In other cases we proceed one character at a
+    time.
 
     So, if our patterns are "twelve", "notes", and "food", and we attempt a
     match of those patterns against a document "food products", we can begin by
