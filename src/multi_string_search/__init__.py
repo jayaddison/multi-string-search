@@ -100,7 +100,7 @@ class FactorOracle:
                 continue
 
             parent_idx = nodes[id(parent)]
-            edges[parent_idx][from_char] = idx
+            edges[parent_idx][to_char] = idx
             dot.edge(str(parent_idx), str(idx), label=to_char)
 
             transitions = []
@@ -120,15 +120,17 @@ class FactorOracle:
                         break
                 else:
                     placement_idx = nodes[id(placement)]
-                    if from_char not in edges[placement_idx]:
-                        edges[placement_idx][from_char] = idx
-                        inbound[placement_idx] |= {from_char}
+                    if to_char not in edges[placement_idx]:
+                        edges[placement_idx][to_char] = idx
+                        inbound[placement_idx] |= {to_char}
                         dot.edge(str(placement_idx), str(idx), label=to_char)
                     continue
 
-            if from_char not in edges[root_idx]:
-                edges[root_idx][from_char] = idx
-                inbound[idx] |= {from_char}
+            print(idx)
+            print(edges[root_idx])
+            if to_char not in edges[root_idx]:
+                edges[root_idx][to_char] = idx
+                inbound[idx] |= {to_char}
                 dot.edge(str(root_idx), str(idx), label=to_char)
 
         dot.render(outfile="testing.png")
