@@ -95,6 +95,9 @@ class FactorOracle:
                 continue
 
             dot.node(str(idx))
+            if parent is None:
+                assert node is root
+                continue
 
             parent_idx = nodes[id(parent)]
             edges[parent_idx][from_char] = idx
