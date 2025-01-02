@@ -15,6 +15,7 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
+from collections import defaultdict
 from typing import Iterator
 
 
@@ -78,8 +79,60 @@ class FactorOracle:
                 if isinstance(subnode, dict):
                     nodes.append((depth + 1, to_char, subnode))
 
+    def _build_graph(root: dict[str, str], prefixes: list[str]) -> dict[str, str]:
+        import graphviz
+        dot = graphviz.Digraph(comment=f"{{{','.join(prefixes)}}}")
+
+        nodes = {id(None): 0}
+        edges = defaultdict(dict)
+        inbound = defaultdict(set)
+        nodes[id(root)] = root_idx = 0
+
+        for idx, (_, from_char, to_char, node, parent, node_is_terminal) in enumerate(FactorOracle._traverse(root)):
+            nodes[id(node)] = idx
+            if node_is_terminal:
+                continue
+
+            dot.node(str(idx))
+
+            parent_idx = nodes[id(parent)]
+            edges[parent_idx][from_char] = idx
+            dot.edge(str(parent_idx), str(idx), label=from_char)
+
+            transitions = []
+            while parent_idx != root_idx:
+                parent, parent_char = parent[".."]
+                parent_idx = nodes[id(parent)]
+                transitions.append(parent_char)
+                if len(inbound[parent_idx]):
+                    break
+
+            if len(inbound[parent_idx]):
+                placement = root
+                for char in transitions:
+                    if char in placement:
+                        placement = placement[char]
+                    else:
+                        break
+                else:
+                    placement_idx = nodes[id(placement)]
+                    inbound[placement_idx] |= {from_char}
+                    dot.edge(str(placement_idx), str(idx), label=from_char)
+                    continue
+
+            if from_char not in edges[root_idx]:
+                edges[root_idx][from_char] = idx
+                inbound[idx] |= {from_char}
+                dot.edge(str(root_idx), str(idx), label=from_char)
+
+        dot.render(outfile="testing.png")
+
     def __init__(self, terms: set[str]):
-        pass
+        prefix_length = min(len(term) for term in terms)
+        prefixes = [term[:prefix_length] for term in terms]
+        reversed_prefixes = [reversed(prefix) for prefix in prefixes]
+        trie = FactorOracle._build_trie(reversed_prefixes)
+        self._graph = FactorOracle._build_graph(trie, prefixes)
 
     def search(self, document):
         for char in iter(document):
