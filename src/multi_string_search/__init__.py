@@ -75,7 +75,7 @@ class FactorOracle:
                 if isinstance(subnode, dict):
                     nodes.append((depth + 1, to_char, subnode))
 
-    def __init__(self, terms: list[str]):
+    def __init__(self, terms: set[str]):
         pass
 
     def search(self, document):
