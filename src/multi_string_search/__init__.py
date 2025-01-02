@@ -127,7 +127,7 @@ class FactorOracle:
             if from_char not in edges[root_idx]:
                 edges[root_idx][from_char] = idx
                 inbound[idx] |= {from_char}
-                dot.edge(str(root_idx), str(idx), label=from_char)
+                dot.edge(str(root_idx), str(idx), label=to_char)
 
         dot.render(outfile="testing.png")
 
