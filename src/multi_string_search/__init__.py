@@ -111,20 +111,25 @@ class FactorOracle:
                 if len(inbound[parent_idx]):
                     break
 
-            placement = root
             if len(inbound[parent_idx]):
+                placement = root
                 for char in transitions:
                     if char in placement:
                         placement = placement[char]
                     else:
-                        placement = root
                         break
+                else:
+                    placement_idx = nodes[id(placement)]
+                    if to_char not in edges[placement_idx]:
+                        edges[placement_idx][to_char] = idx
+                        inbound[placement_idx] |= {to_char}
+                        dot.edge(str(placement_idx), str(idx), label=to_char)
+                    continue
 
-            placement_idx = nodes[id(placement)]
-            if to_char not in edges[placement_idx]:
-                edges[placement_idx][to_char] = idx
-                inbound[placement_idx] |= {to_char}
-                dot.edge(str(placement_idx), str(idx), label=to_char)
+            if to_char not in edges[root_idx]:
+                edges[root_idx][to_char] = idx
+                inbound[idx] |= {to_char}
+                dot.edge(str(root_idx), str(idx), label=to_char)
 
         dot.render(outfile="testing.png")
 
