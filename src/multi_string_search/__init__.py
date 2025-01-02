@@ -42,9 +42,9 @@ class FactorOracle:
     proceeding through two reverse steps of "o" and "o" before finding a
     terminal state (complete string match found) of "f".
 
-       E -> V -> L -> E -> W -> T
+       L -> E -> W -> T
 
-       S -> E -> T -> O -> N
+       E -> T -> O -> N
 
        D -> O -> O -> F
 
