@@ -62,7 +62,7 @@ class FactorOracle:
                 if char not in node:
                     node[char] = {}
                 node, parent = node[char], node
-                node[".."] = parent
+                node[".."] = parent, char
             node[None] = True
         return root
 
