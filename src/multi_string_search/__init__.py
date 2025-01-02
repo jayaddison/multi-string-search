@@ -126,8 +126,6 @@ class FactorOracle:
                         dot.edge(str(placement_idx), str(idx), label=to_char)
                     continue
 
-            print(idx)
-            print(edges[root_idx])
             if to_char not in edges[root_idx]:
                 edges[root_idx][to_char] = idx
                 inbound[idx] |= {to_char}
