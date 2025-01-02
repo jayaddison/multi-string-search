@@ -98,7 +98,7 @@ class FactorOracle:
 
             parent_idx = nodes[id(parent)]
             edges[parent_idx][from_char] = idx
-            dot.edge(str(parent_idx), str(idx), label=from_char)
+            dot.edge(str(parent_idx), str(idx), label=to_char)
 
             transitions = []
             while parent_idx != root_idx:
@@ -118,7 +118,7 @@ class FactorOracle:
                 else:
                     placement_idx = nodes[id(placement)]
                     inbound[placement_idx] |= {from_char}
-                    dot.edge(str(placement_idx), str(idx), label=from_char)
+                    dot.edge(str(placement_idx), str(idx), label=to_char)
                     continue
 
             if from_char not in edges[root_idx]:
