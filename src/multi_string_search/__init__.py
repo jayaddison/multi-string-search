@@ -84,7 +84,7 @@ class FactorOracle:
         import graphviz
         dot = graphviz.Digraph(comment=f"{{{','.join(prefixes)}}}")
 
-        nodes = {}
+        nodes = {id(None): 0}
         edges = defaultdict(dict)
         inbound = defaultdict(set)
         nodes[id(root)] = root_idx = 0
