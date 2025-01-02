@@ -41,7 +41,7 @@ class FactorOracle:
     looking at character 4 (the min-length pattern, "food", has length 4) in
     the document, and our oracle would begin matching from the character "d",
     proceeding through two reverse steps of "o" and "o" before finding a
-    terminal state (complete string match found) of "f".
+    terminal state (complete prefix match found) of "f".
 
        L -> E -> W -> T
 
