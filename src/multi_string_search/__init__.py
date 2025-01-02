@@ -84,10 +84,10 @@ class FactorOracle:
         return False
 
 
-def search_naive(document: str, terms: list[str]) -> bool:
+def search_naive(document: str, terms: set[str]) -> bool:
     return all(term in document for term in terms)
 
 
-def search_sbom(document: str, terms: list[str]) -> bool:
+def search_sbom(document: str, terms: set[str]) -> bool:
     factor_oracle = FactorOracle(terms)
     return factor_oracle.search(document)
