@@ -201,7 +201,7 @@ class FactorOracle:
                     break
             assert advance >= 0
 
-            # Advance to the next successfully-matched character in the document
+            # Advance to the furthest successfully-matched character in the document
             document = document[advance:]
 
             # Remove any terms associated with a matched state node
