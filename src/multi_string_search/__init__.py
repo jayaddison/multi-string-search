@@ -159,11 +159,13 @@ class FactorOracle:
                 continue
             finally:
                 assert advance >= 0
-                document = document[advance or 1:]  # advance past failed char
+                document = document[advance:]  # advance past failed char
             if state in terminals:
                 found |= {term for term in self.terms if document.startswith(term)}
                 if len(found) == len(self.terms):
                     return True
+            if advance == 0:
+                document = document[1:]
         return False
 
 
