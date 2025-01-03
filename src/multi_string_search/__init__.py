@@ -122,9 +122,7 @@ class FactorOracle:
     """
     @staticmethod
     def _build_graph(root: dict) -> tuple[dict]:
-        edges = defaultdict(dict)
-        inbound = set()
-
+        edges, destination_nodes = defaultdict(dict), set()
         for idx, (_, node) in enumerate(root):
             node.set_id(idx)
 
@@ -141,7 +139,7 @@ class FactorOracle:
                 parent, parent_char = parent.parent_node, parent.parent_char
                 if parent.id:
                     transitions.append(parent_char)
-                if parent.id in inbound:
+                if parent.id in destination_nodes:
                     break
 
             if transitions:
@@ -155,11 +153,11 @@ class FactorOracle:
                 else:
                     if to_char not in edges[placement_idx]:
                         edges[placement_idx][to_char] = node
-                        inbound.add(placement_idx)
+                        destination_nodes.add(placement_idx)
 
             if to_char not in edges[root.id]:
                 edges[root.id][to_char] = node
-                inbound.add(node.id)
+                destination_nodes.add(node.id)
 
         return edges
 
