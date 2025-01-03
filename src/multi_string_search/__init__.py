@@ -37,11 +37,8 @@ class TrieNode:
         if self.terms != other.terms:
             return False
         try:
-            if not all(
-                self_child == other_child
-                for self_child, other_child
-                in zip(self.children, other.children, strict=True)
-            ):
+            pairs = zip(self.children, other.children, strict=True)
+            if not all(a == b for a, b in pairs):
                 return False
         except ValueError:
             return False
