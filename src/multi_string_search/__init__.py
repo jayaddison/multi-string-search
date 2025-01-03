@@ -56,10 +56,10 @@ class TrieNode:
         return self.children[child_char]
 
     def __iter__(self) -> Iterator[tuple[int, "TrieNode"]]:
-        nodes = [(0, self)]
+        nodes, idx = [(0, self)], 0
         while nodes:
-            depth, node = nodes.pop(0)
-            yield depth, node
+            (depth, node), idx = nodes.pop(0), idx + 1
+            yield depth, idx, node
             nodes.extend((depth + 1, child) for child in node.children.values())
 
     def add_child(self, child_node, child_char):
@@ -134,7 +134,7 @@ class FactorOracle:
         terminals = set()
 
         nodes[id(root)] = root_idx = 0
-        for idx, (_, node) in enumerate(root):
+        for _, idx, node in root:
             nodes[id(node)] = idx
             if node.is_terminal:
                 terminals.add(idx)
