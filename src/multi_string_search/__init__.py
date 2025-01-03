@@ -129,9 +129,11 @@ class FactorOracle:
             if node is root:
                 continue
 
+            # Always create a transition from the parent node to this one
             parent = node.parent
             edges[parent.id][node.char] = node
 
+            # Collect the path from the nearest node with inbound transitions to here
             transitions = []
             while parent is not root:
                 parent, char = parent.parent, parent.char
@@ -140,16 +142,19 @@ class FactorOracle:
                 if parent.id in destination_nodes:
                     break
 
+            # Navigate from the root of the trie based on the collected path (if any)
             placement = root
             for char in transitions:
                 placement = edges[placement.id].get(char) or root
                 if placement is root:
                     break
 
+            # If we navigated to an available non-root node, add a transition from there
             if placement is not root and node.char not in edges[placement.id]:
                 edges[placement.id][node.char] = node
                 destination_nodes.add(placement.id)
 
+            # If the root node is unaware of the current symbol, add a direct transition
             if node.char not in edges[root.id]:
                 edges[root.id][node.char] = node
                 destination_nodes.add(node.id)
