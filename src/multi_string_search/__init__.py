@@ -195,13 +195,17 @@ class FactorOracle:
                     break
             assert advance >= 0
 
+            # Advance to the next successfully-matched character in the document
             document = document[advance:]
             if not state:
                 continue
 
+            # Remove any terms associated with the matched state node
             remaining -= {term for term in state.terms if document.startswith(term)}
             document = document[1:]
-        return not bool(remaining)
+
+        # Return success if all query terms have been found
+        return len(remaining) == 0
 
 
 def search_naive(document: str, terms: set[str]) -> bool:
