@@ -146,6 +146,7 @@ class FactorOracle:
 
     def search(self, document):
         nodes, edges, terminals = self._graph.values()
+        found = set()
         while window := document[:self.prefix_length]:
             state = 0
             try:
@@ -154,8 +155,10 @@ class FactorOracle:
             except KeyError:
                 document = document[1:]  # TODO: advance past failed char
                 continue
-            if state in terminals and document.startswith(tuple(self.terms)):
-                return True
+            if state in terminals:
+                found |= {term for term in self.terms if document.startswith(term)}
+                if len(found) == len(self.terms):
+                    return True
             document = document[1:]  # slide the window
         return False
 
