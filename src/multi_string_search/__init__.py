@@ -39,7 +39,7 @@ class TrieNode:
         try:
             if not all(
                 self_child == other_child
-                for (self_child, other_child)
+                for self_child, other_child
                 in zip(self.children, other.children, strict=True)
             ):
                 return False
