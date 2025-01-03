@@ -135,19 +135,21 @@ class FactorOracle:
         dot.render(outfile="testing.png")
         return edges, terminals
 
-    def __init__(self, terms: set[str]):
-        self.terms = terms
-        self.prefix_length = min(len(term) for term in terms)
-        prefixes = [term[:self.prefix_length] for term in terms]
-        reversed_prefixes = [reversed(prefix) for prefix in prefixes]
-        trie = FactorOracle._build_trie(reversed_prefixes)
-        edges, terminals = FactorOracle._build_graph(trie)
-        self._graph = {"edges": edges, "terminals": terminals}
+    def __init__(self, query_terms: set[str]):
+        self._query_terms, self._prefix_length = (
+            query_terms,
+            min(len(term) for term in query_terms),
+        )
+        trie = FactorOracle._build_trie(terms=[
+            reversed(term[:self._prefix_length])
+            for term in self._query_terms
+        ])
+        self._graph = FactorOracle._build_graph(trie)
 
     def search(self, document):
-        edges, terminals = self._graph.values()
-        remaining = set(self.terms)
-        while window := document[:self.prefix_length]:
+        edges, terminals = self._graph
+        remaining = set(self._query_terms)
+        while window := document[:self._prefix_length]:
             state, advance = 0, len(window) - 1
             try:
                 for char in reversed(window):
