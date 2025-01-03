@@ -108,11 +108,19 @@ class FactorOracle:
     character "d", proceeding through two reverse steps of "o" and "o" before
     finding a terminal state (complete prefix match found) of "f".
 
+       Document:      "food products"
+       Queries:       "twelve", "mood", "food"
+       Prefix length: 4
+ 
+       Window #1: "food" -> "doof" (read four characters, and reverse)
+
        L -> E -> W -> T
 
                    -> M
                   /
-       D -> O -> O -> F
+       D -> O -> O ->[F]
+
+       Result: match found on complete query term "food" in document.
 
     Note: the factor oracle construction is also designed to accept
     short-circuit transitions; if it reads an "o" character instead of "d"
