@@ -170,8 +170,8 @@ class FactorOracle:
     def __init__(self, query_terms: set[str]):
         self._query_terms = query_terms
         self._prefix_length = min(map(len, query_terms))
-        trie = TrieNode.from_terms(self._query_terms, self._prefix_length)
-        self._graph = FactorOracle._build_graph(trie)
+        self._trie = TrieNode.from_terms(self._query_terms, self._prefix_length)
+        self._graph = FactorOracle._build_graph(self._trie)
         self._export_graph()
 
     def _export_graph(self):
@@ -186,8 +186,7 @@ class FactorOracle:
     def search(self, document):
         remaining = set(self._query_terms)
         while window := document[:self._prefix_length]:
-            state, advance = TrieNode(), len(window) - 1
-            state.set_id(0)
+            state, advance = self._trie, len(window) - 1
             try:
                 for char in reversed(window):
                     state = self._graph[state.id][char]
