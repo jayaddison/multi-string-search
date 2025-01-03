@@ -161,6 +161,7 @@ class FactorOracle:
                 assert advance >= 0
                 document = document[advance:]  # advance past failed char
             if state in terminals:
+                # TODO: only compare terms associated with the relevant terminal
                 found |= {term for term in self.terms if document.startswith(term)}
                 if len(found) == len(self.terms):
                     return True
