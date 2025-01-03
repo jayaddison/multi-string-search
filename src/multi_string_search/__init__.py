@@ -126,12 +126,10 @@ class FactorOracle:
     def _build_graph(root: dict) -> tuple[dict]:
         edges, destination_nodes = defaultdict(dict), set()
         for node in root:
-            parent = node.parent_node
-            if parent is None:
-                assert node is root
+            if node is root:
                 continue
 
-            to_char = node.parent_char
+            parent, to_char = node.parent_node, node.parent_char
             edges[parent.id][to_char] = node
 
             transitions = []
