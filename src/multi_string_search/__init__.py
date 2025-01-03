@@ -16,6 +16,7 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 from collections import defaultdict
+from os import getenv
 from typing import Iterator
 
 
@@ -165,6 +166,8 @@ class FactorOracle:
         self._export_graph()
 
     def _export_graph(self):
+        if not getenv("DEBUG"):
+            return
         import graphviz
         dot = graphviz.Digraph()
         for node_id, transitions in self._graph.items():
