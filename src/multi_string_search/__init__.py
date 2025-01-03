@@ -186,6 +186,11 @@ class FactorOracle:
     def search(self, document):
         remaining = set(self._query_terms)
         while window := document[:self._prefix_length]:
+
+            # Optimization: no results can be found in a window smaller than the prefix
+            if len(window) < self._prefix_length:
+                break
+
             state = self._trie
             try:
                 for idx, char in enumerate(reversed(window)):
