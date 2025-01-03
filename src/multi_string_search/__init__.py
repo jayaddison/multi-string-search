@@ -157,9 +157,9 @@ class FactorOracle:
                     advance -= 1
             except KeyError:
                 pass
-            finally:
-                assert advance >= 0
-                document = document[advance:]  # advance past failed char
+
+            assert advance >= 0
+            document = document[advance:]  # advance past failed char
             if state in terminals:
                 # TODO: only compare terms associated with the relevant terminal
                 found |= {term for term in self.terms if document.startswith(term)}
