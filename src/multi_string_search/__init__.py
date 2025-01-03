@@ -148,7 +148,7 @@ class FactorOracle:
                 continue
 
             to_char = node.parent_char
-            edges[parent.id][to_char] = node.id
+            edges[parent.id][to_char] = node
             dot.edge(str(parent.id), str(node.id), label=to_char)
 
             transitions = []
@@ -164,17 +164,17 @@ class FactorOracle:
                 while transitions:
                     char = transitions.pop()
                     if char in edges[placement_idx]:
-                        placement_idx = edges[placement_idx][char]
+                        placement_idx = edges[placement_idx][char].id
                     else:
                         break
                 else:
                     if to_char not in edges[placement_idx]:
-                        edges[placement_idx][to_char] = node.id
+                        edges[placement_idx][to_char] = node
                         inbound[placement_idx] |= {to_char}
                         dot.edge(str(placement_idx), str(node.id), label=to_char)
 
             if to_char not in edges[root.id]:
-                edges[root.id][to_char] = node.id
+                edges[root.id][to_char] = node
                 inbound[node.id] |= {to_char}
                 dot.edge(str(root.id), str(node.id), label=to_char)
 
@@ -199,7 +199,7 @@ class FactorOracle:
             state, advance = 0, len(window) - 1
             try:
                 for char in reversed(window):
-                    state = edges[state][char]
+                    state = edges[state][char].id
                     if state in terminals:
                         # TODO: yield further matching candidates?
                         break
