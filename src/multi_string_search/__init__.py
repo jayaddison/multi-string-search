@@ -69,10 +69,6 @@ class TrieNode:
     def set_id(self, value):
         self.id = value
 
-    @property
-    def is_terminal(self):
-        return bool(self.terms)
-
     @staticmethod
     def from_terms(terms: list[str], prefix_length: int) -> "TrieNode":
         root = TrieNode()
@@ -185,32 +181,27 @@ class FactorOracle:
 
     def search(self, document):
         remaining = set(self._query_terms)
-        while window := document[:self._prefix_length]:
+        while (window := document[:self._prefix_length]) and remaining:
 
             # Optimization: no results can be found in a window smaller than the prefix
             if len(window) < self._prefix_length:
                 break
 
-            state = self._trie
-            try:
-                for idx, char in enumerate(reversed(window)):
-                    state = self._graph[state.id][char]
-                    if state.is_terminal:
-                        break
-            except KeyError:
-                pass
-
-            advance = self._prefix_length - idx - 1
+            state, advance = self._trie, self._prefix_length - 1
+            for char in reversed(window):
+                state = self._graph[state.id].get(char)
+                if state is None or state.terms:
+                    break
+                advance -= 1
             assert advance >= 0
-            document = document[advance:]
 
-            if state.is_terminal:
-                remaining -= {term for term in state.terms if document.startswith(term)}
-                if not remaining:
-                    return True
-            if advance == 0:
-                document = document[1:]
-        return False
+            document = document[advance:]
+            if not state:
+                continue
+
+            remaining -= {term for term in state.terms if document.startswith(term)}
+            document = document[1:]
+        return not bool(remaining)
 
 
 def search_naive(document: str, terms: set[str]) -> bool:
