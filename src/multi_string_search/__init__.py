@@ -105,7 +105,7 @@ class FactorOracle:
             dot.edge(str(parent_idx), str(idx), label=to_char)
 
             transitions = []
-            while parent_idx != root_idx:
+            while parent is not root:
                 parent, parent_char = parent[".."]
                 parent_idx = nodes[id(parent)]
                 if parent_idx:
