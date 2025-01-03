@@ -196,7 +196,8 @@ class FactorOracle:
             if state and state.terms:
                 remaining -= {term for term in state.terms if document.startswith(term)}
 
-            document = document[1:]
+            if advance == 0:
+                document = document[1:]
 
         # Return success if all query terms have been found
         return len(remaining) == 0
