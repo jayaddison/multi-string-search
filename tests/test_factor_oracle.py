@@ -36,18 +36,18 @@ class TestFactorOracleSearch(TestCase):
     def test_trie_traversal(self):
         terms = ("abc", "aab", "aabc", "bac")
         trie = FactorOracle._build_trie(terms)
-        traversal = list((depth, from_char, to_char) for (depth, from_char, to_char, _, _, _) in FactorOracle._traverse(trie))
+        traversal = list((depth, transition) for (depth, transition, _, _, _) in FactorOracle._traverse(trie))
         self.assertEqual([
-            (0, None, None),
-            (0, None, 'a'),
-            (0, None, 'b'),
-            (1, 'a', 'b'),
-            (1, 'a', 'a'),
-            (1, 'b', 'a'),
-            (2, 'b', 'c'),  # abc
-            (2, 'a', 'b'),  # aab
-            (2, 'a', 'c'),  # bac
-            (3, 'b', 'c'),  # aabc
+            (0, None),
+            (0, 'a'),
+            (0, 'b'),
+            (1, 'b'),
+            (1, 'a'),
+            (1, 'a'),
+            (2, 'c'),  # abc
+            (2, 'b'),  # aab
+            (2, 'c'),  # bac
+            (3, 'c'),  # aabc
         ], traversal)
 
     def test_complete_queries(self):

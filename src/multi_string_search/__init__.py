@@ -69,16 +69,16 @@ class FactorOracle:
 
     @staticmethod
     def _traverse(trie: dict[str, str]) -> Iterator[tuple[str, dict[str, str], str | None, int]]:
-        nodes = [(0, None, trie)]
-        yield 0, None, None, trie, None, False
+        nodes = [(0, trie)]
+        yield 0, None, trie, None, False
         while nodes:
-            depth, from_char, node = nodes.pop(0)
+            depth, node = nodes.pop(0)
             for to_char, subnode in node.items():
                 if to_char == "..":
                     continue
                 if isinstance(subnode, dict):
-                    yield depth, from_char, to_char, subnode, node, None in subnode
-                    nodes.append((depth + 1, to_char, subnode))
+                    yield depth, to_char, subnode, node, None in subnode
+                    nodes.append((depth + 1, subnode))
 
     def _build_graph(root: dict[str, str], prefixes: list[str]) -> tuple[dict[int, str], dict[int, dict[str, int]], set[str]]:
         import graphviz
@@ -90,7 +90,7 @@ class FactorOracle:
         terminals = set()
 
         nodes[id(root)] = root_idx = 0
-        for idx, (_, from_char, to_char, node, parent, node_is_terminal) in enumerate(FactorOracle._traverse(root)):
+        for idx, (_, to_char, node, parent, node_is_terminal) in enumerate(FactorOracle._traverse(root)):
             nodes[id(node)] = idx
             if node_is_terminal:
                 terminals.add(idx)
