@@ -129,8 +129,8 @@ class FactorOracle:
             if node is root:
                 continue
 
-            parent, to_char = node.parent, node.char
-            edges[parent.id][to_char] = node
+            parent = node.parent
+            edges[parent.id][node.char] = node
 
             transitions = []
             while parent is not root:
@@ -149,12 +149,12 @@ class FactorOracle:
                     else:
                         break
                 else:
-                    if to_char not in edges[placement_idx]:
-                        edges[placement_idx][to_char] = node
+                    if node.char not in edges[placement_idx]:
+                        edges[placement_idx][node.char] = node
                         destination_nodes.add(placement_idx)
 
-            if to_char not in edges[root.id]:
-                edges[root.id][to_char] = node
+            if node.char not in edges[root.id]:
+                edges[root.id][node.char] = node
                 destination_nodes.add(node.id)
 
         return edges
