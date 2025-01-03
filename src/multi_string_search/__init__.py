@@ -34,7 +34,7 @@ class TrieNode:
 
     def __eq__(self, other):
         assert isinstance(other, TrieNode)
-        if self.is_terminal != other.is_terminal:
+        if self.terms != other.terms:
             return False
         try:
             if not all(
@@ -77,11 +77,11 @@ class TrieNode:
         return bool(self.terms)
 
     @staticmethod
-    def from_terms(terms: list[str]) -> "TrieNode":
+    def from_terms(terms: list[str], prefix_length: int) -> "TrieNode":
         root = TrieNode()
         for term in terms:
             node, parent = root, None
-            for char in term:
+            for char in term[:prefix_length][::-1]:  # reversed prefixes
                 parent = node
                 if char in node:
                     node = node[char]
@@ -179,14 +179,9 @@ class FactorOracle:
         return edges
 
     def __init__(self, query_terms: set[str]):
-        self._query_terms, self._prefix_length = (
-            query_terms,
-            min(len(term) for term in query_terms),
-        )
-        trie = TrieNode.from_terms(terms=[
-            reversed(term[:self._prefix_length])
-            for term in self._query_terms
-        ])
+        self._query_terms = query_terms
+        self._prefix_length = min(map(len, query_terms))
+        trie = TrieNode.from_terms(self._query_terms, self._prefix_length)
         self._graph = FactorOracle._build_graph(trie)
 
     def search(self, document):
@@ -198,17 +193,15 @@ class FactorOracle:
                 for char in reversed(window):
                     state = self._graph[state.id][char]
                     if state.is_terminal:
-                        # TODO: yield further matching candidates?
                         break
                     advance -= 1
             except KeyError:
                 pass
 
             assert advance >= 0
-            document = document[advance:]  # advance past failed char
+            document = document[advance:]
             if state.is_terminal:
-                # TODO: only compare terms associated with the relevant terminal
-                remaining -= {term for term in remaining if document.startswith(term)}
+                remaining -= {term for term in state.terms if document.startswith(term)}
                 if not remaining:
                     return True
             if advance == 0:
