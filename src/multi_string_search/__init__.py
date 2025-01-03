@@ -57,12 +57,10 @@ class TrieNode:
 
     def __iter__(self) -> Iterator[tuple[int, str | None, dict, dict | None, bool]]:
         nodes = [(0, self)]
-        yield 0, self
         while nodes:
             depth, node = nodes.pop(0)
-            for child in node.children.values():
-                yield depth, child
-                nodes.append((depth + 1, child))
+            yield depth, node
+            nodes.extend((depth + 1, child) for child in node.children.values())
 
     def add_child(self, child_node, child_char):
         assert child_char not in self.children

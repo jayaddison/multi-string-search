@@ -41,15 +41,15 @@ class TestFactorOracleSearch(TestCase):
         traversal = [(depth, node.parent_char) for (depth, node) in trie]
         self.assertEqual([
             (0, None),
-            (0, 'a'),
-            (0, 'b'),
+            (1, 'a'),
             (1, 'b'),
-            (1, 'a'),
-            (1, 'a'),
-            (2, 'c'),  # abc
-            (2, 'b'),  # aab
-            (2, 'c'),  # bac
-            (3, 'c'),  # aabc
+            (2, 'b'),
+            (2, 'a'),
+            (2, 'a'),
+            (3, 'c'),  # abc
+            (3, 'b'),  # aab
+            (3, 'c'),  # bac
+            (4, 'c'),  # aabc
         ], traversal)
 
     def test_complete_queries(self):
