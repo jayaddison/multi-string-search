@@ -195,7 +195,7 @@ class FactorOracle:
             except KeyError:
                 pass
 
-            advance = len(window) - idx - 1
+            advance = self._prefix_length - idx - 1
             assert advance >= 0
             document = document[advance:]
 
