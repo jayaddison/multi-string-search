@@ -187,12 +187,11 @@ class FactorOracle:
             if len(window) < self._prefix_length:
                 break
 
-            state, advance = self._trie, self._prefix_length - 1
+            state, advance = self._trie, self._prefix_length
             for char in reversed(window):
-                state = self._graph[state.id].get(char)
+                state, advance = self._graph[state.id].get(char), advance - 1
                 if state is None or state.terms:
                     break
-                advance -= 1
             assert advance >= 0
 
             document = document[advance:]
