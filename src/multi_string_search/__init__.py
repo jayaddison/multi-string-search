@@ -153,6 +153,7 @@ class FactorOracle:
                 for char in reversed(window):
                     state = edges[state][char]
                     if state in terminals:
+                        # TODO: yield further matching candidates?
                         break
                     advance -= 1
             except KeyError:
