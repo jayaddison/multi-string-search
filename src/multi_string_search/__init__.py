@@ -25,15 +25,13 @@ class TrieNode:
     def __init__(self, parent=None, char=None, children=None, terms=None):
         self.parent = parent
         self.char = char
-        self.children = {}
+        self.children = children or {}
         self.terms = frozenset(terms or [])
         self.allocate_id()
 
-        if children:
-            for char in children:
-                self.children[char] = children[char]
-                children[char].parent = self
-                children[char].char = char
+        for char in self.children:
+            children[char].parent = self
+            children[char].char = char
 
     def __eq__(self, other):
         assert isinstance(other, TrieNode)
