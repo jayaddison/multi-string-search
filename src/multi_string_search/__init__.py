@@ -20,11 +20,14 @@ from typing import Iterator
 
 
 class TrieNode:
+    counter = 0
+
     def __init__(self, parent=None, char=None, children=None, terms=None):
         self.parent = parent
         self.char = char
         self.children = {}
         self.terms = frozenset(terms or [])
+        self.allocate_id()
 
         if children:
             for char in children:
@@ -53,13 +56,11 @@ class TrieNode:
         return self.children[child_char]
 
     def __iter__(self) -> Iterator[tuple[int, "TrieNode"]]:
-        nodes, idx = [self], 0
+        nodes = [self]
         while nodes:
             node = nodes.pop(0)
-            node.set_id(idx)
             yield node
             nodes.extend(node.children.values())
-            idx += 1
 
     def add_child(self, child_node, child_char):
         assert child_char not in self.children
@@ -68,8 +69,8 @@ class TrieNode:
     def add_term(self, term):
         self.terms = frozenset(self.terms | {term})
 
-    def set_id(self, value):
-        self.id = value
+    def allocate_id(self):
+        self.id, TrieNode.counter = TrieNode.counter, TrieNode.counter + 1
 
     @staticmethod
     def from_terms(terms: list[str], prefix_length: int) -> "TrieNode":
