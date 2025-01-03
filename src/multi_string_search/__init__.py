@@ -19,6 +19,78 @@ from collections import defaultdict
 from typing import Iterator
 
 
+class TrieNode:
+    def __init__(self, parent_node=None, parent_char=None, children=None, terms=None):
+        self.parent_node = parent_node
+        self.parent_char = parent_char
+        self.children = {}
+        self.terms = frozenset(terms or [])
+
+        if children:
+            for char in children:
+                self.children[char] = children[char]
+                children[char].parent_node = self
+                children[char].parent_char = char
+
+    def __eq__(self, other):
+        assert isinstance(other, TrieNode)
+        if self.is_terminal != other.is_terminal:
+            return False
+        try:
+            if not all(
+                self_child == other_child
+                for (self_child, other_child)
+                in zip(self.children, other.children, strict=True)
+            ):
+                return False
+        except ValueError:
+            return False
+        if self.parent_char != other.parent_char:
+            return False
+        return True
+
+    def __contains__(self, child_char):
+        return child_char in self.children
+
+    def __getitem__(self, child_char):
+        return self.children[child_char]
+
+    def __iter__(self) -> Iterator[tuple[int, str | None, dict, dict | None, bool]]:
+        nodes = [(0, self)]
+        yield 0, self
+        while nodes:
+            depth, node = nodes.pop(0)
+            for child in node.children.values():
+                yield depth, child
+                nodes.append((depth + 1, child))
+
+    def add_child(self, child_node, child_char):
+        assert child_char not in self.children
+        self.children[child_char] = child_node
+
+    def add_term(self, term):
+        self.terms = frozenset(self.terms | {term})
+
+    @property
+    def is_terminal(self):
+        return bool(self.terms)
+
+    @staticmethod
+    def from_terms(terms: list[str]) -> "TrieNode":
+        root = TrieNode()
+        for term in terms:
+            node, parent = root, None
+            for char in term:
+                parent = node
+                if char in node:
+                    node = node[char]
+                else:
+                    node = TrieNode(parent_node=node, parent_char=char)
+                    parent.add_child(node, char)
+            node.add_term(term)
+        return root
+
+
 class FactorOracle:
     """
     This class will implement a Set Backwards Oracle Matching (SBOM) factor
@@ -54,32 +126,6 @@ class FactorOracle:
     patterns; when overlapping patterns do exist, the oracle factor's graph
     consolidates (de-duplicates) the overlapping parts.
     """
-    @staticmethod
-    def _build_trie(terms: list[str]) -> dict:
-        root = {"..": (None, None)}
-        for term in terms:
-            node, parent = root, None
-            for char in term:
-                if char not in node:
-                    node[char] = {}
-                node, parent = node[char], node
-                node[".."] = parent, char
-            node[None] = True
-        return root
-
-    @staticmethod
-    def _traverse(trie: dict) -> Iterator[tuple[int, str | None, dict, dict | None, bool]]:
-        nodes = [(0, trie)]
-        yield 0, None, trie, None, False
-        while nodes:
-            depth, node = nodes.pop(0)
-            for to_char, subnode in node.items():
-                if to_char == "..":
-                    continue
-                if isinstance(subnode, dict):
-                    yield depth, to_char, subnode, node, None in subnode
-                    nodes.append((depth + 1, subnode))
-
     def _build_graph(root: dict) -> tuple[dict, set[str]]:
         import graphviz
         dot = graphviz.Digraph()
@@ -90,23 +136,26 @@ class FactorOracle:
         terminals = set()
 
         nodes[id(root)] = root_idx = 0
-        for idx, (_, to_char, node, parent, node_is_terminal) in enumerate(FactorOracle._traverse(root)):
+        for idx, (_, node) in enumerate(root):
             nodes[id(node)] = idx
-            if node_is_terminal:
+            if node.is_terminal:
                 terminals.add(idx)
 
             dot.node(str(idx))
+
+            parent = node.parent_node
             if parent is None:
                 assert node is root
                 continue
 
+            to_char = node.parent_char
             parent_idx = nodes[id(parent)]
             edges[parent_idx][to_char] = idx
             dot.edge(str(parent_idx), str(idx), label=to_char)
 
             transitions = []
             while parent is not root:
-                parent, parent_char = parent[".."]
+                parent, parent_char = parent.parent_node, parent.parent_char
                 parent_idx = nodes[id(parent)]
                 if parent_idx:
                     transitions.append(parent_char)
@@ -140,7 +189,7 @@ class FactorOracle:
             query_terms,
             min(len(term) for term in query_terms),
         )
-        trie = FactorOracle._build_trie(terms=[
+        trie = TrieNode.from_terms(terms=[
             reversed(term[:self._prefix_length])
             for term in self._query_terms
         ])

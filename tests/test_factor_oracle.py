@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from multi_string_search import FactorOracle, search_sbom
+from multi_string_search import FactorOracle, TrieNode, search_sbom
 
 from tests.fixtures import (
     DOCUMENT,
@@ -14,29 +14,31 @@ class TestFactorOracleSearch(TestCase):
 
     def test_trie_build(self):
         terms = ("abc", "aab", "aabc", "bac")
-        trie = FactorOracle._build_trie(terms)
+        trie = TrieNode.from_terms(terms)
 
-        def del_parent_node_references(node):
-            del node[".."]
-            for _, subnode in node.items():
-                if isinstance(subnode, dict):
-                    del_parent_node_references(subnode)
-        del_parent_node_references(trie)
+        expected_trie = TrieNode(
+            children={
+                "a": TrieNode(children={
+                    "b": TrieNode(children={"c": TrieNode(terms={"abc"})}),
+                    "a": TrieNode(children={
+                        "b": TrieNode(
+                            children={"c": TrieNode(terms={"aabc"})},
+                            terms={"aab"}
+                        )
+                    })
+                }),
+                "b": TrieNode(children={
+                    "a": TrieNode(children={"c": TrieNode(terms={"bac"})}),
+                }),
+            }
+        )
 
-        self.assertEqual({
-            'a': {
-                'b': {'c': {None: True}},
-                'a': {'b': {None: True, "c": {None: True}}},
-            },
-            'b': {
-                'a': {'c': {None: True}},
-            },
-        }, trie)
+        self.assertEqual(expected_trie, trie)
 
     def test_trie_traversal(self):
         terms = ("abc", "aab", "aabc", "bac")
-        trie = FactorOracle._build_trie(terms)
-        traversal = list((depth, char) for (depth, char, _, _, _) in FactorOracle._traverse(trie))
+        trie = TrieNode.from_terms(terms)
+        traversal = [(depth, node.parent_char) for (depth, node) in trie]
         self.assertEqual([
             (0, None),
             (0, 'a'),
