@@ -108,24 +108,24 @@ class FactorOracle:
             while parent_idx != root_idx:
                 parent, parent_char = parent[".."]
                 parent_idx = nodes[id(parent)]
-                transitions.append(parent_char)
+                if parent_idx:
+                    transitions.append(parent_char)
                 if len(inbound[parent_idx]):
                     break
 
-            if len(inbound[parent_idx]):
-                placement = root
-                for char in transitions:
-                    if char in placement:
-                        placement = placement[char]
+            if transitions:
+                placement_idx = 0
+                while transitions:
+                    char = transitions.pop()
+                    if char in edges[placement_idx]:
+                        placement_idx = edges[placement_idx][char]
                     else:
                         break
                 else:
-                    placement_idx = nodes[id(placement)]
                     if to_char not in edges[placement_idx]:
                         edges[placement_idx][to_char] = idx
                         inbound[placement_idx] |= {to_char}
                         dot.edge(str(placement_idx), str(idx), label=to_char)
-                    continue
 
             if to_char not in edges[root_idx]:
                 edges[root_idx][to_char] = idx
@@ -148,18 +148,22 @@ class FactorOracle:
         nodes, edges, terminals = self._graph.values()
         found = set()
         while window := document[:self.prefix_length]:
-            state = 0
+            state, advance = 0, len(window) - 1
             try:
                 for char in reversed(window):
                     state = edges[state][char]
+                    if state in terminals:
+                        break
+                    advance -= 1
             except KeyError:
-                document = document[1:]  # TODO: advance past failed char
                 continue
+            finally:
+                assert advance >= 0
+                document = document[advance or 1:]  # advance past failed char
             if state in terminals:
                 found |= {term for term in self.terms if document.startswith(term)}
                 if len(found) == len(self.terms):
                     return True
-            document = document[1:]  # slide the window
         return False
 
 
