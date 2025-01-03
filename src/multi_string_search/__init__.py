@@ -156,7 +156,7 @@ class FactorOracle:
                         break
                     advance -= 1
             except KeyError:
-                continue
+                pass
             finally:
                 assert advance >= 0
                 document = document[advance:]  # advance past failed char
