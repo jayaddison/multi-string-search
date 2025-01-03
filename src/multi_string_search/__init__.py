@@ -133,7 +133,7 @@ class FactorOracle:
                 dot.edge(str(root_idx), str(idx), label=to_char)
 
         dot.render(outfile="testing.png")
-        return nodes, edges, terminals
+        return edges, terminals
 
     def __init__(self, terms: set[str]):
         self.terms = terms
@@ -141,11 +141,11 @@ class FactorOracle:
         prefixes = [term[:self.prefix_length] for term in terms]
         reversed_prefixes = [reversed(prefix) for prefix in prefixes]
         trie = FactorOracle._build_trie(reversed_prefixes)
-        nodes, edges, terminals = FactorOracle._build_graph(trie, prefixes)
-        self._graph = {"nodes": nodes, "edges": edges, "terminals": terminals}
+        edges, terminals = FactorOracle._build_graph(trie, prefixes)
+        self._graph = {"edges": edges, "terminals": terminals}
 
     def search(self, document):
-        nodes, edges, terminals = self._graph.values()
+        edges, terminals = self._graph.values()
         found = set()
         while window := document[:self.prefix_length]:
             state, advance = 0, len(window) - 1
