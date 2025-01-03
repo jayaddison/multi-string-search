@@ -1,1 +1,3 @@
 This is a sample paragraph of text.  It will be used to confirm the behaviour of an implementation of Set-Backwards-Oracle-Matching (SBOM) multi-pattern online text search.
+
+abcdefghijklmnopqrstuvwxyz
