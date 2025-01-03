@@ -80,7 +80,7 @@ class FactorOracle:
                     yield depth, to_char, subnode, node, None in subnode
                     nodes.append((depth + 1, subnode))
 
-    def _build_graph(root: dict[str, str], prefixes: list[str]) -> tuple[dict[int, str], dict[int, dict[str, int]], set[str]]:
+    def _build_graph(root: dict[str, str], prefixes: list[str]) -> tuple[dict[int, dict[str, int]], set[str]]:
         import graphviz
         dot = graphviz.Digraph(comment=f"{{{','.join(prefixes)}}}")
 
