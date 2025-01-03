@@ -33,19 +33,22 @@ class TestFactorOracleSearch(TestCase):
     def test_trie_traversal(self):
         terms = ("cba", "baa", "cbaa", "cab")
         trie = TrieNode.from_terms(terms, 4)
-        traversal = [(depth, node.parent_char) for (depth, node) in trie]
-        self.assertEqual([
-            (0, None),
-            (1, 'a'),
-            (1, 'b'),
-            (2, 'b'),
-            (2, 'a'),
-            (2, 'a'),
-            (3, 'c'),  # abc
-            (3, 'b'),  # aab
-            (3, 'c'),  # bac
-            (4, 'c'),  # aabc
-        ], traversal)
+        traversal = [node.parent_char for node in trie]
+
+        expected_traversal = [
+            None,
+            "a",
+            "b",
+            "b",
+            "a",
+            "a",
+            "c",  # abc
+            "b",  # aab
+            "c",  # bac
+            "c",  # aabc
+        ]
+
+        self.assertEqual(expected_traversal, traversal)
 
     def test_complete_queries(self):
         for terms in complete_subset_queries:

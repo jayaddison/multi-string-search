@@ -53,11 +53,13 @@ class TrieNode:
         return self.children[child_char]
 
     def __iter__(self) -> Iterator[tuple[int, "TrieNode"]]:
-        nodes = [(0, self)]
+        nodes, idx = [self], 0
         while nodes:
-            depth, node = nodes.pop(0)
-            yield depth, node
-            nodes.extend((depth + 1, child) for child in node.children.values())
+            node = nodes.pop(0)
+            node.set_id(idx)
+            yield node
+            nodes.extend(node.children.values())
+            idx += 1
 
     def add_child(self, child_node, child_char):
         assert child_char not in self.children
@@ -123,9 +125,7 @@ class FactorOracle:
     @staticmethod
     def _build_graph(root: dict) -> tuple[dict]:
         edges, destination_nodes = defaultdict(dict), set()
-        for idx, (_, node) in enumerate(root):
-            node.set_id(idx)
-
+        for node in root:
             parent = node.parent_node
             if parent is None:
                 assert node is root
