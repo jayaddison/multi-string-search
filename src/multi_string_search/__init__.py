@@ -29,9 +29,9 @@ class TrieNode:
         self.terms = frozenset(terms or [])
         self.allocate_id()
 
-        for child_char in self.children:
-            children[char].parent = self
-            children[char].char = child_char
+        for child_char, child in self.children.items():
+            child.parent = self
+            child.char = child_char
 
     def __eq__(self, other):
         assert isinstance(other, TrieNode)
