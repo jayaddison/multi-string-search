@@ -68,7 +68,7 @@ class FactorOracle:
         return root
 
     @staticmethod
-    def _traverse(trie: dict[str, str]) -> Iterator[tuple[str, dict[str, str], str | None, int]]:
+    def _traverse(trie: dict) -> Iterator[tuple[int, str | None, dict, dict | None, bool]]:
         nodes = [(0, trie)]
         yield 0, None, trie, None, False
         while nodes:
@@ -80,7 +80,7 @@ class FactorOracle:
                     yield depth, to_char, subnode, node, None in subnode
                     nodes.append((depth + 1, subnode))
 
-    def _build_graph(root: dict[str, str], prefixes: list[str]) -> tuple[dict[int, dict[str, int]], set[str]]:
+    def _build_graph(root: dict, prefixes: list[str]) -> tuple[dict, set[str]]:
         import graphviz
         dot = graphviz.Digraph(comment=f"{{{','.join(prefixes)}}}")
 
