@@ -55,7 +55,7 @@ class TrieNode:
     def __getitem__(self, child_char):
         return self.children[child_char]
 
-    def __iter__(self) -> Iterator[tuple[int, str | None, dict, dict | None, bool]]:
+    def __iter__(self) -> Iterator[tuple[int, "TrieNode"]]:
         nodes = [(0, self)]
         while nodes:
             depth, node = nodes.pop(0)
