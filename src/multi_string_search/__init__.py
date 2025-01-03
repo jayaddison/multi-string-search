@@ -191,11 +191,11 @@ class FactorOracle:
 
             # Advance to the next successfully-matched character in the document
             document = document[advance:]
-            if not state:
-                continue
 
-            # Remove any terms associated with the matched state node
-            remaining -= {term for term in state.terms if document.startswith(term)}
+            # Remove any terms associated with a matched state node
+            if state and state.terms:
+                remaining -= {term for term in state.terms if document.startswith(term)}
+
             document = document[1:]
 
         # Return success if all query terms have been found

@@ -2,7 +2,7 @@ complete_subset_queries = (
   ["sample paragraph", "confirm the behaviour", "text search"],
   ["paragraph of text", "Set-Backwards-Oracle-Matching", "multi-pattern"],
   ["text"],
-  ["This is"],
+  ["This is", "Thi", "his", "is"],
 )
 
 overlapping_set_queries = (
