@@ -74,14 +74,13 @@ class TrieNode:
     def from_terms(terms: list[str], prefix_length: int) -> "TrieNode":
         root = TrieNode()
         for term in terms:
-            node, parent = root, None
+            node = root
             for char in term[:prefix_length][::-1]:  # reversed prefixes
-                parent = node
                 if char in node:
                     node = node[char]
                 else:
                     node = TrieNode(parent=node, char=char)
-                    parent.add_child(node, char)
+                    node.parent.add_child(node, char)
             node.add_term(term)
         return root
 
