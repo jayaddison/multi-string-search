@@ -146,7 +146,7 @@ class FactorOracle:
 
     def search(self, document):
         edges, terminals = self._graph.values()
-        found = set()
+        remaining = set(self.terms)
         while window := document[:self.prefix_length]:
             state, advance = 0, len(window) - 1
             try:
@@ -163,8 +163,8 @@ class FactorOracle:
             document = document[advance:]  # advance past failed char
             if state in terminals:
                 # TODO: only compare terms associated with the relevant terminal
-                found |= {term for term in self.terms if document.startswith(term)}
-                if len(found) == len(self.terms):
+                remaining -= {term for term in remaining if document.startswith(term)}
+                if not remaining:
                     return True
             if advance == 0:
                 document = document[1:]
