@@ -31,7 +31,6 @@ class TrieNode:
 
         for child in self.children.values():
             child.parent = self
-            child.char = char
 
     def __eq__(self, other):
         assert isinstance(other, TrieNode)
