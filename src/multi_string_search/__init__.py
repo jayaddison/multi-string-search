@@ -125,16 +125,11 @@ class FactorOracle:
     consolidates (de-duplicates) the overlapping parts.
     """
     def _build_graph(root: dict) -> tuple[dict, set[str]]:
-        import graphviz
-        dot = graphviz.Digraph()
-
         edges = defaultdict(dict)
         inbound = defaultdict(set)
 
         for idx, (_, node) in enumerate(root):
             node.set_id(idx)
-
-            dot.node(str(node.id))
 
             parent = node.parent_node
             if parent is None:
@@ -143,7 +138,6 @@ class FactorOracle:
 
             to_char = node.parent_char
             edges[parent.id][to_char] = node
-            dot.edge(str(parent.id), str(node.id), label=to_char)
 
             transitions = []
             while parent is not root:
@@ -165,14 +159,11 @@ class FactorOracle:
                     if to_char not in edges[placement_idx]:
                         edges[placement_idx][to_char] = node
                         inbound[placement_idx] |= {to_char}
-                        dot.edge(str(placement_idx), str(node.id), label=to_char)
 
             if to_char not in edges[root.id]:
                 edges[root.id][to_char] = node
                 inbound[node.id] |= {to_char}
-                dot.edge(str(root.id), str(node.id), label=to_char)
 
-        dot.render(outfile="testing.png")
         return edges
 
     def __init__(self, query_terms: set[str]):
@@ -180,6 +171,16 @@ class FactorOracle:
         self._prefix_length = min(map(len, query_terms))
         trie = TrieNode.from_terms(self._query_terms, self._prefix_length)
         self._graph = FactorOracle._build_graph(trie)
+        self._export_graph()
+
+    def _export_graph(self):
+        import graphviz
+        dot = graphviz.Digraph()
+        for node_id, transitions in self._graph.items():
+            dot.node(str(node_id))
+            for char, to_node in transitions.items():
+                dot.edge(str(node_id), str(to_node.id), label=char)
+        dot.render(outfile="testing.png")
 
     def search(self, document):
         remaining = set(self._query_terms)
