@@ -35,17 +35,14 @@ class TrieNode:
 
     def __eq__(self, other):
         assert isinstance(other, TrieNode)
-        if self.terms != other.terms:
-            return False
+        term_equality = self.terms == other.terms
+        pairs = zip(self.children, other.children, strict=True)
         try:
-            pairs = zip(self.children, other.children, strict=True)
-            if not all(a == b for a, b in pairs):
-                return False
+            pair_equality = all(a == b for a, b in pairs)
         except ValueError:
             return False
-        if self.char != other.char:
-            return False
-        return True
+        char_equality = self.char == other.char
+        return term_equality and pair_equality and char_equality
 
     def __contains__(self, child_char):
         return child_char in self.children
