@@ -56,10 +56,10 @@ class TrieNode:
         return self.children[child_char]
 
     def __iter__(self) -> Iterator[tuple[int, "TrieNode"]]:
-        nodes, idx = [(0, self)], 0
+        nodes = [(0, self)]
         while nodes:
-            (depth, node), idx = nodes.pop(0), idx + 1
-            yield depth, idx, node
+            depth, node = nodes.pop(0)
+            yield depth, node
             nodes.extend((depth + 1, child) for child in node.children.values())
 
     def add_child(self, child_node, child_char):
@@ -68,6 +68,9 @@ class TrieNode:
 
     def add_term(self, term):
         self.terms = frozenset(self.terms | {term})
+
+    def set_id(self, value):
+        self.id = value
 
     @property
     def is_terminal(self):
@@ -128,18 +131,16 @@ class FactorOracle:
         import graphviz
         dot = graphviz.Digraph()
 
-        nodes = {}
         edges = defaultdict(dict)
         inbound = defaultdict(set)
         terminals = set()
 
-        nodes[id(root)] = root_idx = 0
-        for _, idx, node in root:
-            nodes[id(node)] = idx
+        for idx, (_, node) in enumerate(root):
+            node.set_id(idx)
             if node.is_terminal:
-                terminals.add(idx)
+                terminals.add(node.id)
 
-            dot.node(str(idx))
+            dot.node(str(node.id))
 
             parent = node.parent_node
             if parent is None:
@@ -147,17 +148,15 @@ class FactorOracle:
                 continue
 
             to_char = node.parent_char
-            parent_idx = nodes[id(parent)]
-            edges[parent_idx][to_char] = idx
-            dot.edge(str(parent_idx), str(idx), label=to_char)
+            edges[parent.id][to_char] = node.id
+            dot.edge(str(parent.id), str(node.id), label=to_char)
 
             transitions = []
             while parent is not root:
                 parent, parent_char = parent.parent_node, parent.parent_char
-                parent_idx = nodes[id(parent)]
-                if parent_idx:
+                if parent.id:
                     transitions.append(parent_char)
-                if len(inbound[parent_idx]):
+                if len(inbound[parent.id]):
                     break
 
             if transitions:
@@ -170,14 +169,14 @@ class FactorOracle:
                         break
                 else:
                     if to_char not in edges[placement_idx]:
-                        edges[placement_idx][to_char] = idx
+                        edges[placement_idx][to_char] = node.id
                         inbound[placement_idx] |= {to_char}
-                        dot.edge(str(placement_idx), str(idx), label=to_char)
+                        dot.edge(str(placement_idx), str(node.id), label=to_char)
 
-            if to_char not in edges[root_idx]:
-                edges[root_idx][to_char] = idx
-                inbound[idx] |= {to_char}
-                dot.edge(str(root_idx), str(idx), label=to_char)
+            if to_char not in edges[root.id]:
+                edges[root.id][to_char] = node.id
+                inbound[node.id] |= {to_char}
+                dot.edge(str(root.id), str(node.id), label=to_char)
 
         dot.render(outfile="testing.png")
         return edges, terminals

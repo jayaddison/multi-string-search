@@ -38,7 +38,7 @@ class TestFactorOracleSearch(TestCase):
     def test_trie_traversal(self):
         terms = ("abc", "aab", "aabc", "bac")
         trie = TrieNode.from_terms(terms)
-        traversal = [(depth, node.parent_char) for (depth, _, node) in trie]
+        traversal = [(depth, node.parent_char) for (depth, node) in trie]
         self.assertEqual([
             (0, None),
             (1, 'a'),
