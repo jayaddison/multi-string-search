@@ -124,6 +124,7 @@ class FactorOracle:
     patterns; when overlapping patterns do exist, the oracle factor's graph
     consolidates (de-duplicates) the overlapping parts.
     """
+    @staticmethod
     def _build_graph(root: dict) -> tuple[dict]:
         edges = defaultdict(dict)
         inbound = defaultdict(set)
