@@ -101,22 +101,23 @@ class FactorOracle:
     by its complete length.  In other cases we proceed one character at a
     time.
 
-    So, if our patterns are "twelve", "notes", and "food", and we attempt a
+    So, if our patterns are "twelve", "mood", and "food", and we attempt a
     match of those patterns against a document "food products", we can begin by
-    looking at character 4 (the min-length pattern, "food", has length 4) in
-    the document, and our oracle would begin matching from the character "d",
-    proceeding through two reverse steps of "o" and "o" before finding a
-    terminal state (complete prefix match found) of "f".
+    looking at character 4 (the min-length patterns "mood" and "food" have
+    length 4) in the document, and our oracle would begin matching from the
+    character "d", proceeding through two reverse steps of "o" and "o" before
+    finding a terminal state (complete prefix match found) of "f".
 
        L -> E -> W -> T
 
-       E -> T -> O -> N
-
+                   -> M
+                  /
        D -> O -> O -> F
 
-    For these example patterns we don't have much overlap between the input
-    patterns; when overlapping patterns do exist, the oracle factor's graph
-    consolidates (de-duplicates) the overlapping parts.
+    Note: the factor oracle construction is also designed to accept
+    short-circuit transitions; if it reads an "o" character instead of "d"
+    in our previous example, then it may jump directly to one of the matching
+    nodes in the graph.  (TODO: explain this concisely and clearly)
     """
     @staticmethod
     def _build_graph(root: TrieNode) -> dict[int, dict[str, TrieNode]]:
