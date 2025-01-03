@@ -133,12 +133,9 @@ class FactorOracle:
 
         edges = defaultdict(dict)
         inbound = defaultdict(set)
-        terminals = set()
 
         for idx, (_, node) in enumerate(root):
             node.set_id(idx)
-            if node.is_terminal:
-                terminals.add(node.id)
 
             dot.node(str(node.id))
 
@@ -179,7 +176,7 @@ class FactorOracle:
                 dot.edge(str(root.id), str(node.id), label=to_char)
 
         dot.render(outfile="testing.png")
-        return edges, terminals
+        return edges
 
     def __init__(self, query_terms: set[str]):
         self._query_terms, self._prefix_length = (
@@ -193,14 +190,14 @@ class FactorOracle:
         self._graph = FactorOracle._build_graph(trie)
 
     def search(self, document):
-        edges, terminals = self._graph
         remaining = set(self._query_terms)
         while window := document[:self._prefix_length]:
-            state, advance = 0, len(window) - 1
+            state, advance = TrieNode(), len(window) - 1
+            state.set_id(0)
             try:
                 for char in reversed(window):
-                    state = edges[state][char].id
-                    if state in terminals:
+                    state = self._graph[state.id][char]
+                    if state.is_terminal:
                         # TODO: yield further matching candidates?
                         break
                     advance -= 1
@@ -209,7 +206,7 @@ class FactorOracle:
 
             assert advance >= 0
             document = document[advance:]  # advance past failed char
-            if state in terminals:
+            if state.is_terminal:
                 # TODO: only compare terms associated with the relevant terminal
                 remaining -= {term for term in remaining if document.startswith(term)}
                 if not remaining:
