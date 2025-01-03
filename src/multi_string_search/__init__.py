@@ -140,18 +140,15 @@ class FactorOracle:
                 if parent.id in destination_nodes:
                     break
 
-            if transitions:
-                placement_idx = 0
-                while transitions:
-                    char = transitions.pop()
-                    if char in edges[placement_idx]:
-                        placement_idx = edges[placement_idx][char].id
-                    else:
-                        break
-                else:
-                    if node.char not in edges[placement_idx]:
-                        edges[placement_idx][node.char] = node
-                        destination_nodes.add(placement_idx)
+            placement = root
+            for char in transitions:
+                placement = edges[placement.id].get(char) or root
+                if placement is root:
+                    break
+
+            if placement is not root and node.char not in edges[placement.id]:
+                edges[placement.id][node.char] = node
+                destination_nodes.add(placement.id)
 
             if node.char not in edges[root.id]:
                 edges[root.id][node.char] = node
