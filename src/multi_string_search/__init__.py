@@ -186,18 +186,19 @@ class FactorOracle:
     def search(self, document):
         remaining = set(self._query_terms)
         while window := document[:self._prefix_length]:
-            state, advance = self._trie, len(window) - 1
+            state = self._trie
             try:
-                for char in reversed(window):
+                for idx, char in enumerate(reversed(window)):
                     state = self._graph[state.id][char]
                     if state.is_terminal:
                         break
-                    advance -= 1
             except KeyError:
                 pass
 
+            advance = len(window) - idx - 1
             assert advance >= 0
             document = document[advance:]
+
             if state.is_terminal:
                 remaining -= {term for term in state.terms if document.startswith(term)}
                 if not remaining:
