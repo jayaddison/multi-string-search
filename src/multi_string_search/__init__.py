@@ -53,7 +53,7 @@ class TrieNode:
     def __getitem__(self, child_char):
         return self.children[child_char]
 
-    def __iter__(self) -> Iterator[tuple[int, "TrieNode"]]:
+    def __iter__(self) -> Iterator["TrieNode"]:
         nodes = [self]
         while nodes:
             node = nodes.pop(0)
@@ -71,7 +71,7 @@ class TrieNode:
         self.id, TrieNode.counter = TrieNode.counter, TrieNode.counter + 1
 
     @staticmethod
-    def from_terms(terms: list[str], prefix_length: int) -> "TrieNode":
+    def from_terms(terms: set[str], prefix_length: int) -> "TrieNode":
         root = TrieNode()
         for term in terms:
             node = root
@@ -121,8 +121,9 @@ class FactorOracle:
     consolidates (de-duplicates) the overlapping parts.
     """
     @staticmethod
-    def _build_graph(root: dict) -> tuple[dict]:
-        edges, destination_nodes = defaultdict(dict), set()
+    def _build_graph(root: TrieNode) -> dict[int, dict[str, TrieNode]]:
+        edges: dict[int, dict[str, TrieNode]] = defaultdict(dict)
+        destination_nodes: set[int] = set()
         for node in root:
             if node is root:
                 continue
@@ -141,7 +142,7 @@ class FactorOracle:
                     break
 
             # Navigate from the root of the trie based on the collected path (if any)
-            placement = root
+            placement: TrieNode = root
             for char in transitions:
                 placement = edges[placement.id].get(char) or root
                 if placement is root:
