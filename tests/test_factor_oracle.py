@@ -33,7 +33,7 @@ class TestFactorOracleSearch(TestCase):
     def test_trie_traversal(self):
         terms = ("cba", "baa", "cbaa", "cab")
         trie = TrieNode.from_terms(terms, 4)
-        traversal = [node.parent_char for node in trie]
+        traversal = [node.char for node in trie]
 
         expected_traversal = [
             None,

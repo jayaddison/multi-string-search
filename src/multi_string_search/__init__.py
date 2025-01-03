@@ -20,17 +20,17 @@ from typing import Iterator
 
 
 class TrieNode:
-    def __init__(self, parent_node=None, parent_char=None, children=None, terms=None):
-        self.parent_node = parent_node
-        self.parent_char = parent_char
+    def __init__(self, parent=None, char=None, children=None, terms=None):
+        self.parent = parent
+        self.char = char
         self.children = {}
         self.terms = frozenset(terms or [])
 
         if children:
             for char in children:
                 self.children[char] = children[char]
-                children[char].parent_node = self
-                children[char].parent_char = char
+                children[char].parent = self
+                children[char].char = char
 
     def __eq__(self, other):
         assert isinstance(other, TrieNode)
@@ -42,7 +42,7 @@ class TrieNode:
                 return False
         except ValueError:
             return False
-        if self.parent_char != other.parent_char:
+        if self.char != other.char:
             return False
         return True
 
@@ -81,7 +81,7 @@ class TrieNode:
                 if char in node:
                     node = node[char]
                 else:
-                    node = TrieNode(parent_node=node, parent_char=char)
+                    node = TrieNode(parent=node, char=char)
                     parent.add_child(node, char)
             node.add_term(term)
         return root
@@ -129,14 +129,14 @@ class FactorOracle:
             if node is root:
                 continue
 
-            parent, to_char = node.parent_node, node.parent_char
+            parent, to_char = node.parent, node.char
             edges[parent.id][to_char] = node
 
             transitions = []
             while parent is not root:
-                parent, parent_char = parent.parent_node, parent.parent_char
+                parent, char = parent.parent, parent.char
                 if parent.id:
-                    transitions.append(parent_char)
+                    transitions.append(char)
                 if parent.id in destination_nodes:
                     break
 
