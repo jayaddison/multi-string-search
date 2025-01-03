@@ -187,6 +187,7 @@ class FactorOracle:
             if len(window) < self._prefix_length:
                 break
 
+            # Read backwards through the window, and correspondingly down the trie
             state, advance = self._trie, self._prefix_length
             for char in reversed(window):
                 state, advance = self._graph[state.id].get(char), advance - 1
