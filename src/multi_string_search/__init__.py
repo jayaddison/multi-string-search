@@ -152,7 +152,7 @@ class FactorOracle:
                 for char in reversed(window):
                     state = edges[state][char]
             except KeyError:
-                document = document[self.prefix_length - 1:]  # advance the window
+                document = document[1:]  # TODO: advance past failed char
                 continue
             if state in terminals and document.startswith(tuple(self.terms)):
                 return True
