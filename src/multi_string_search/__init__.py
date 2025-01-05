@@ -126,6 +126,10 @@ class FactorOracle:
     short-circuit transitions; if it reads an "o" character instead of "d"
     in our previous example, then it may jump directly to one of the matching
     nodes in the graph.  (TODO: explain this concisely and clearly)
+
+    For a more comprehensive description of the algorithm on which this
+    implementation is based, refer to the book "Flexible Pattern Matching in
+    Strings", by G Navarro and M Raffinot, 2002, Cambridge University Press.
     """
     @staticmethod
     def _build_graph(root: TrieNode) -> dict[int, dict[str, TrieNode]]:
